@@ -9,30 +9,11 @@ resource "azurerm_container_registry" "example" {
   sku                   = "Premium"
   data_endpoint_enabled = true
 }
-resource "azurerm_container_registry_scope_map" "example" {
-  name                    = "examplescopemap"
-  container_registry_name = azurerm_container_registry.example.name
-  resource_group_name     = azurerm_container_registry.example.resource_group_name
-  actions = [
-    "repositories/hello-world/content/delete",
-    "repositories/hello-world/content/read",
-    "repositories/hello-world/content/write",
-    "repositories/hello-world/metadata/read",
-    "repositories/hello-world/metadata/write",
-    "gateway/examplecr/config/read",
-    "gateway/examplecr/config/write",
-    "gateway/examplecr/message/read",
-    "gateway/examplecr/message/write",
-  ]
-}
-resource "azurerm_container_registry_token" "example" {
-  name                    = "exampletoken"
-  container_registry_name = azurerm_container_registry.example.name
-  resource_group_name     = azurerm_container_registry.example.resource_group_name
-  scope_map_id            = azurerm_container_registry_scope_map.example.id
-}
-resource "azurerm_container_connected_registry" "example" {
-  name                  = "examplecr"
-  container_registry_id = azurerm_container_registry.example.id
-  sync_token_id         = azurerm_container_registry_token.example.id
+
+
+
+resource "azurerm_role_assignment" "acr_pull" {
+  scope                = azurerm_container_registry.example.id
+  role_definition_name = "AcrPull"
+  principal_id         = azurerm_linux_web_app.example.identity[0].principal_id
 }
