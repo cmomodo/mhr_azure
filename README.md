@@ -16,6 +16,12 @@ Key Components:
 - Azure Application Gateway or Front Door for HTTPS routing.
 - GitHub Actions or Azure DevOps for CI/CD (your choice).
 
+## System Architecture
+
+![System Architecture](/Images/azure.png)
+
+
+
 ## Task/Assignment 📝
 
 - Create a repository for your work.
