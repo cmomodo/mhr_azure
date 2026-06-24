@@ -1,0 +1,4 @@
+az storage container create \
+  --name tfstate \
+  --account-name mhstate01 \
+  --auth-mode login
