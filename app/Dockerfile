@@ -9,11 +9,14 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 FROM python:3.10-slim AS production
 WORKDIR /code
 
-RUN addgroup --system app && adduser --system --ingroup app app
+RUN addgroup --system app && adduser --system --ingroup app --home /home/app app
+
+ENV HOME=/home/app
 
 COPY --from=builder /usr/local/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
 COPY app.py ./
+COPY cosmos_store.py ./
 COPY templates/ ./templates/
 COPY static/ ./static/
 

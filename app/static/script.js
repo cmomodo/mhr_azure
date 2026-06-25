@@ -4,10 +4,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('add-task-form');
     form.addEventListener('submit', addTask);
   });
+
+  async function parseError(response, fallbackMessage) {
+    try {
+      const payload = await response.json();
+      return payload.description || payload.error || fallbackMessage;
+    } catch {
+      return fallbackMessage;
+    }
+  }
   
   function fetchTasks() {
     fetch('/tasks')
-      .then(response => response.json())
+      .then(async response => {
+        if (!response.ok) {
+          throw new Error(await parseError(response, 'Failed to fetch tasks'));
+        }
+        return response.json();
+      })
       .then(data => {
         const container = document.getElementById('task-container');
         container.innerHTML = '';
@@ -39,9 +53,9 @@ document.addEventListener('DOMContentLoaded', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ title, description })
     })
-    .then(response => {
+    .then(async response => {
       if (!response.ok) {
-        throw new Error('Failed to add task');
+        throw new Error(await parseError(response, 'Failed to add task'));
       }
       return response.json();
     })
@@ -57,9 +71,9 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch(`/tasks/${taskId}`, {
       method: 'DELETE'
     })
-    .then(response => {
+    .then(async response => {
       if (!response.ok) {
-        throw new Error('Failed to delete task');
+        throw new Error(await parseError(response, 'Failed to delete task'));
       }
       fetchTasks();
     })
@@ -72,9 +86,9 @@ document.addEventListener('DOMContentLoaded', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ completed: !currentStatus })
     })
-    .then(response => {
+    .then(async response => {
       if (!response.ok) {
-        throw new Error('Failed to update task');
+        throw new Error(await parseError(response, 'Failed to update task'));
       }
       return response.json();
     })

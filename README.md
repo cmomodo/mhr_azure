@@ -82,4 +82,39 @@ Add screenshots of your deployed application here. For example:
 
 - Home Page
 - Task Manager in Action
+
+## Terraform Region Notes
+
+This stack reads the Azure region from the existing resource group by default.
+
+- `azurerm_container_app_environment` is deployed in the resource group's region because it is attached to a subnet in the same virtual network.
+- `azurerm_cosmosdb_account` also defaults to the resource group's region, but you can override it if that region is blocked for new Cosmos DB accounts.
+
+If Azure returns `RequestDisallowedByAzure` for an ineligible location:
+
+1. Check the existing resource group's region.
+2. If that region is blocked for Container Apps, use or create a resource group in an eligible region and rerun Terraform.
+3. If only Cosmos DB is blocked, override `cosmos_location` with an eligible region, for example:
+
+```bash
+terraform apply -var="cosmos_location=uksouth"
+```
+
+You can inspect the current resource group region with:
+
+```bash
+az group show --name 27_state_file --query location --output tsv
+```
+
+## Reusing An Existing Container Apps Environment
+
+If Azure already has a Container Apps environment attached to `container-apps-subnet`, Terraform must reuse that environment instead of creating a second one on the same subnet.
+
+Set the existing environment name when applying:
+
+```bash
+terraform -chdir=infra apply -var="existing_container_app_environment_name=task-manager-cae"
+```
+
+Leave `existing_container_app_environment_name` unset only when Terraform should create a new Container Apps environment itself.
 # mhr_azure
