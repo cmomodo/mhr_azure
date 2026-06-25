@@ -1,26 +1,25 @@
 # syntax=docker/dockerfile:1.4
-FROM --platform=$BUILDPLATFORM python:3.10-alpine AS builder
 
+FROM python:3.10-slim AS builder
+WORKDIR /code
+COPY requirements.txt .
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --no-cache-dir -r requirements.txt
+
+FROM python:3.10-slim AS production
 WORKDIR /code
 
-COPY requirements.txt /code
-RUN --mount=type=cache,target=/root/.cache/pip \
-    pip3 install -r requirements.txt
+RUN addgroup --system app && adduser --system --ingroup app app
 
-COPY . /code
+COPY --from=builder /usr/local/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
+COPY app.py ./
+COPY templates/ ./templates/
+COPY static/ ./static/
 
-ENTRYPOINT ["python3"]
-CMD ["app.py"]
-FROM builder as dev-envs
+USER app
+EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s \
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:3000/health')"
 
-RUN <<EOF
-apk update
-apk add git bash
-EOF
-
-RUN <<EOF
-addgroup -S docker
-adduser -S --shell /bin/bash --ingroup docker vscode
-EOF
-# install Docker tools (cli, buildx, compose)
-COPY --from=gloursdocker/docker / /§
+CMD ["gunicorn", "--bind", "0.0.0.0:3000", "--workers", "1", "app:app"]

@@ -10,6 +10,10 @@ tasks = {}
 def index():
     return render_template('index.html')
 
+@app.route('/health')
+def health():
+    return jsonify({'status': 'ok'}), 200
+
 @app.route('/tasks', methods=['GET'])
 def get_tasks():
     return jsonify(list(tasks.values()))
