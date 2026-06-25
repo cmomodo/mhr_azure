@@ -6,11 +6,12 @@
 
 ## Overview
 
-This project mirrors the AWS ECS-based setup, but we will now deploy the open-source app on Azure using Azure Container Apps. 
+This project mirrors the AWS ECS-based setup, but we will now deploy the open-source app on Azure using Azure Container Apps.
 
 The goal is to package, build, and deploy an application using Terraform and CI/CD pipelines, ensuring best practices in infrastructure as code, security, and scalability.
 
 Key Components:
+
 - Azure Container Registry (ACR) for container images.
 - Azure Container Apps (or AKS) to run containers.
 - Azure Application Gateway or Front Door for HTTPS routing.
@@ -19,8 +20,6 @@ Key Components:
 ## System Architecture
 
 ![System Architecture](/Images/azure.png)
-
-
 
 ## Task/Assignment 📝
 
@@ -41,7 +40,7 @@ Key Components:
 ### Directory Structure
 
 - `terraform/` - Terraform configuration for Azure resources. Use modules for reusable components.
-- `app/` -  App code and Dockerfile.
+- `app/` - App code and Dockerfile.
 - `.github/workflows/` - CI/CD pipeline configuration (GitHub Actions). Or any other CI/CD tool you want to use.
 - `docs/` - Documentation for the project. Diagrams/Architectures.
 - `README.md` - Project documentation.
@@ -82,6 +81,9 @@ Add screenshots of your deployed application here. For example:
 
 - Home Page
 - Task Manager in Action
+  ![Task Manager in Action](/Images/Tasks.png)
+- Cli tasks manual check
+  ![Task Manager in Action](/Images/cli_check.png)
 
 ## Terraform Region Notes
 
@@ -117,4 +119,5 @@ terraform -chdir=infra apply -var="existing_container_app_environment_name=task-
 ```
 
 Leave `existing_container_app_environment_name` unset only when Terraform should create a new Container Apps environment itself.
+
 # mhr_azure
