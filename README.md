@@ -1,7 +1,3 @@
-<div align="center">
-    <img src="./app/static/images/coderco_logo.jpeg" alt="CoderCo" width="300"/>
-</div>
-
 # Project: CoderCo Assignment 1 - Open Source App Hosted on Azure with Terraform 🚀
 
 ## Overview
@@ -19,7 +15,7 @@ Key Components:
 
 ## System Architecture
 
-![System Architecture](/Images/azure.png)
+![System Architecture](Images/azure.png)
 
 ## Task/Assignment 📝
 
@@ -80,10 +76,11 @@ curl -X DELETE http://localhost:3000/tasks/1
 Add screenshots of your deployed application here. For example:
 
 - Home Page
+  ![Home Page](Images/Homepage.png)
 - Task Manager in Action
-  ![Task Manager in Action](/Images/Tasks.png)
+  ![Task Manager in Action](Images/Tasks.png)
 - Cli tasks manual check
-  ![Task Manager in Action](/Images/cli_check.png)
+  ![Cli tasks manual check](Images/cli_check.png)
 
 ## Terraform Region Notes
 
