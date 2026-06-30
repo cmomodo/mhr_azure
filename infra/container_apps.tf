@@ -61,6 +61,7 @@ resource "azurerm_container_app" "task_manager" {
     }
   }
 
+  #registry i am using to pull container images
   registry {
     server               = azurerm_container_registry.task_manager_acr.login_server
     username             = azurerm_container_registry.task_manager_acr.admin_username

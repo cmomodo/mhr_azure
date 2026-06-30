@@ -1,9 +1,11 @@
+#network securty group
 resource "azurerm_network_security_group" "task_manager" {
   name                = "task-manager-nsg"
   location            = data.azurerm_resource_group.task_manager_rg.location
   resource_group_name = data.azurerm_resource_group.task_manager_rg.name
 }
 
+#virtual network
 resource "azurerm_virtual_network" "task_manager_vnet" {
   name                = "task-manager-vnet"
   location            = data.azurerm_resource_group.task_manager_rg.location
@@ -15,6 +17,7 @@ resource "azurerm_virtual_network" "task_manager_vnet" {
   }
 }
 
+#private endpoints subnet
 resource "azurerm_subnet" "private_endpoints" {
   name                              = "private-endpoints-subnet"
   resource_group_name               = data.azurerm_resource_group.task_manager_rg.name
@@ -23,15 +26,20 @@ resource "azurerm_subnet" "private_endpoints" {
   private_endpoint_network_policies = "Disabled"
 }
 
+#container apps subnet
 resource "azurerm_subnet" "container_apps" {
   name                 = "container-apps-subnet"
   resource_group_name  = data.azurerm_resource_group.task_manager_rg.name
   virtual_network_name = azurerm_virtual_network.task_manager_vnet.name
   address_prefixes     = ["10.10.2.0/23"]
 
+  #delegation to container apps
+  # for container apps to join this subnet
   delegation {
     name = "container-apps-delegation"
 
+    #service delegation to container apps
+    #
     service_delegation {
       name    = "Microsoft.App/environments"
       actions = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
@@ -39,11 +47,13 @@ resource "azurerm_subnet" "container_apps" {
   }
 }
 
+#container apps security group association
 resource "azurerm_subnet_network_security_group_association" "container_apps" {
   subnet_id                 = azurerm_subnet.container_apps.id
   network_security_group_id = azurerm_network_security_group.task_manager.id
 }
 
+#application gateway subnet
 resource "azurerm_subnet" "application_gateway" {
   name                 = "application-gateway-subnet"
   resource_group_name  = data.azurerm_resource_group.task_manager_rg.name

@@ -1,3 +1,4 @@
+#The name of the Azure Container Registry.
 resource "azurerm_container_registry" "task_manager_acr" {
   name                          = var.acr_name
   resource_group_name           = data.azurerm_resource_group.task_manager_rg.name
@@ -11,12 +12,13 @@ resource "azurerm_container_registry" "task_manager_acr" {
     prevent_destroy = true
   }
 }
-
+#private zone for acr
 resource "azurerm_private_dns_zone" "acr" {
   name                = "privatelink.azurecr.io"
   resource_group_name = data.azurerm_resource_group.task_manager_rg.name
 }
 
+#access for virtual network privaate endpoint
 resource "azurerm_private_dns_zone_virtual_network_link" "acr" {
   name                  = "task-manager-acr-vnet-link"
   resource_group_name   = data.azurerm_resource_group.task_manager_rg.name
@@ -24,6 +26,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "acr" {
   virtual_network_id    = azurerm_virtual_network.task_manager_vnet.id
 }
 
+#private endpoint for acr
 resource "azurerm_private_endpoint" "acr" {
   name                = "task-manager-acr-pe"
   location            = data.azurerm_resource_group.task_manager_rg.location

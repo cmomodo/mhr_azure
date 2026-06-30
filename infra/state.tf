@@ -1,3 +1,4 @@
+#remote state terraform backend configuration
 terraform {
   backend "azurerm" {
     resource_group_name  = "27_state_file"
